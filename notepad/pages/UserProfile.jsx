@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
+import Note from "../components/Note";
 
 const UserProfile = ({navigation}) => {
-    const [newPassword, setNewPassowrd] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     
     const handlePasswordChange = () => {
 
@@ -11,16 +12,17 @@ const UserProfile = ({navigation}) => {
 
     const handleLogout = () => {
 
-        navigation.navigate('Main');
+        navigation.popToTop('Main');
     }
 
     return (
     <View>
         <Text>Zalogowano jako: exampleUser</Text>
+        <Note/>
         <Text>Zmień hasło:</Text>
         <TextInput
         placeholder="Nowe hasło"
-        onChangeText={(newPassword) => setPassword(newPassword)}
+        onChangeText={(newPassword) => setNewPassword(newPassword)}
         value={newPassword}
         secureTextEntry={true}
         />
