@@ -1,17 +1,14 @@
 import React, { useState} from "react";
 import { View, Text, TextInput, Button } from "react-native";
+import users from "../components/storage/UsersStore";
 
 const Login = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = () => {
-        //this is the worst way possible to handle login user
-        const hardcodedUser = {username : 'admin', password: 'admin'};
-
-        const credentials = (username === hardcodedUser.username && password === hardcodedUser.password);
-        if (credentials === true) {
-            //navigate to users profile page
+      const user = users.find((u) => u.name === username && u.password === password);
+      if (user){
             navigation.navigate('UserProfile');
         } else {
             alert('Wprowadzono złą nazwę użytkownika lub haslo');

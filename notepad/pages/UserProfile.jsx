@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import Note from "../components/Note";
+import users from "../components/storage/UsersStore";
 
 const UserProfile = ({navigation}) => {
     const [newPassword, setNewPassword] = useState('');
     
     const handlePasswordChange = () => {
-
+        const userIndex = users.findIndex((u) => u.name === 'exampleUser'); //to change
+        if (userIndex !== -1) {
+            users[userIndex].password = newPassword;
+        }
         alert('Hasło zostało zmienione');
     }
 

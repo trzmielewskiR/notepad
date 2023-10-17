@@ -6,6 +6,7 @@ import MainScreen from "./pages/MainScreen";
 import Register from './pages/Register';
 import Login from './pages/Login';
 import UserProfile from './pages/UserProfile';
+import users from './components/storage/UsersStore';
 
 const Stack = createNativeStackNavigator();
 

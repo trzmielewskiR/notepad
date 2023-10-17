@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
+import users from '../components/storage/UsersStore';
 
 const Register = ({navigation}) => {
     const [username, setUsername] = useState('');
@@ -8,11 +9,8 @@ const Register = ({navigation}) => {
 
     const handleRegister = () => {
         if (password === repeatPassword) {
-            console.log('wtf')
-            //stworzenie uzytkownika jezeli zgadza sie haslo
             const user = { username, password };
-            //stworzenie uztywkoniak mozna uzyc asyncstorage
-            //potem powrot do glownego widoku
+            users.push(user);
             navigation.navigate('Main');
         } else {
             alert('Password do not match');
