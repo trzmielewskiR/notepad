@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
-import users from '../components/storage/UsersStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Register = ({navigation}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         if (password === repeatPassword) {
             const user = { username, password };
-            users.push(user);
-            navigation.navigate('Main');
+            try {
+                await AsyncStorage.setItem('user', JSON.stringify(user));
+                alert('Użytkownik został zarejestrowany');
+                navigation.navigate('Main');
+            } catch (error) {
+                console.error('Error storing user data:', error);
+            }
         } else {
             alert('Password do not match');
         }

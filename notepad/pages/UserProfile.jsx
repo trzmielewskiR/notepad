@@ -1,27 +1,40 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import Note from "../components/Note";
-import users from "../components/storage/UsersStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const UserProfile = ({navigation}) => {
+const UserProfile = ({navigation, route}) => {
     const [newPassword, setNewPassword] = useState('');
+    const { currentUser } = route.params;
     
-    const handlePasswordChange = () => {
-        const userIndex = users.findIndex((u) => u.name === 'exampleUser'); //to change
-        if (userIndex !== -1) {
-            users[userIndex].password = newPassword;
+    const handlePasswordChange = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData)
+                if (user.username === currentUser.username){
+                    user.password = newPassword;
+                await AsyncStorage.setItem('user', JSON.stringify(user));
+                alert('Hasło zostało zmienione');
+                } else {
+                    alert('Dane użytkownika nie zgadzają się z zapisanymi');
+                }
+        } else {
+            alert('Nie znaleziono takiego użytkownika');
         }
-        alert('Hasło zostało zmienione');
-    }
+    } catch (error) {
+        console.error('Error updating password', error);
+    }}
 
     const handleLogout = () => {
-
         navigation.popToTop('Main');
     }
 
     return (
     <View>
-        <Text>Zalogowano jako: exampleUser</Text>
+        {currentUser && (
+            <Text>Zalogowano jako: {currentUser.username}</Text>
+        )}
         <Note/>
         <Text>Zmień hasło:</Text>
         <TextInput

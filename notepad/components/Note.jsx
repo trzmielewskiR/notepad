@@ -15,7 +15,6 @@ const Note = () => {
     };
 
     const handleDeleteNote = () => {
-
         alert('Notatka została usunięta');
         setNote('');
         setEditing(false);

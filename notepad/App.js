@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,7 +7,6 @@ import MainScreen from "./pages/MainScreen";
 import Register from './pages/Register';
 import Login from './pages/Login';
 import UserProfile from './pages/UserProfile';
-import users from './components/storage/UsersStore';
 
 const Stack = createNativeStackNavigator();
 
