@@ -9,10 +9,31 @@ const Register = ({navigation}) => {
 
     const handleRegister = async () => {
         if (password === repeatPassword) {
-            const user = { username, password, note: '' };
             try {
-                await AsyncStorage.setItem('user', JSON.stringify(user));
-                alert('Użytkownik został zarejestrowany');
+                const existingUserData = await AsyncStorage.getItem('users');
+                let users = [];
+
+                if (existingUserData){
+                    users = JSON.parse(existingUserData);
+                }
+
+                const usernameExists = users.some((user) => user.username === username);
+                if (usernameExists){
+                    alert('Nazwa użytkownika jest zajęta, proszę wybrać inną.')
+                    return;
+                }
+
+                const newUser = {username, password, note: ''};
+
+                if (users.length === 0){
+                    users = [newUser];
+                } else {
+                    users.push(newUser);
+                }
+                await AsyncStorage.setItem('users', JSON.stringify(users));
+                alert('Użytkownik został zarejestrowany')
+                console.log(newUser);
+                console.log(users);
                 navigation.navigate('Main');
             } catch (error) {
                 console.error('Error storing user data:', error);

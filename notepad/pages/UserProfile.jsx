@@ -8,23 +8,28 @@ const UserProfile = ({navigation, route}) => {
     const { currentUser } = route.params;
     
     const handlePasswordChange = async () => {
-        try {
-            const userData = await AsyncStorage.getItem('user');
-            if (userData) {
-                const user = JSON.parse(userData)
-                if (user.username === currentUser.username){
-                    user.password = newPassword;
-                await AsyncStorage.setItem('user', JSON.stringify(user));
+        if (newPassword) {
+            currentUser.password = newPassword;
+      
+            try {
+              const userData = await AsyncStorage.getItem('users');
+              if (userData) {
+                const users = JSON.parse(userData);
+                const updatedUsers = users.map((u) => (u.username === currentUser.username ? currentUser : u));
+      
+                await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
                 alert('Hasło zostało zmienione');
-                } else {
-                    alert('Dane użytkownika nie zgadzają się z zapisanymi');
-                }
-        } else {
-            alert('Nie znaleziono takiego użytkownika');
+                setNewPassword('');
+              } else {
+                alert('Nie znaleziono takiego użytkownika');
+              }
+            } catch (error) {
+              console.error('Error changing password:', error);
+            }
+          } else {
+            alert('Hasło nie może być takie jest stare hasło. Wprowadź nowe.');
+          }
         }
-    } catch (error) {
-        console.error('Error updating password', error);
-    }}
 
     const handleLogout = () => {
         navigation.popToTop('Main');

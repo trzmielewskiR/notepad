@@ -7,40 +7,50 @@ const Note = ({user}) => {
 
 
     useEffect(() => {
-        const getNote = async () => {
-            try {
-                setNote(user.note);
-            } catch (error) {
-                console.error('Error retrieving user note: ', error);
-            }
-        };
-
-        getNote();
+        if (user && user.note) {
+            setNote(user.note);
+        }
     }, [user]);
 
 
     const handleSaveNote = async () => {
-        const newNote = note;
+        user.note = note;
 
         try {
-            user.note = newNote;
-            await AsyncStorage.setItem('user', JSON.stringify(user));
-            alert('Notatka została zapisana');
+          const userData = await AsyncStorage.getItem('users');
+          if (userData) {
+            const users = JSON.parse(userData);
+            const updatedUsers = users.map((u) => (u.username === user.username ? user : u));
+    
+            await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
+            alert('Notatka zostałą zapisana');
+          } else {
+            alert('Nie znaleziono takiego użytkownika');
+          }
         } catch (error) {
-            console.error('Error with saving note: ', error);
+          console.error('Error saving user note:', error);
         }
-    }
+      }
 
     const handleDeleteNote = async () => {
+        user.note = '';
+
         try {
-            user.note = '';
-            await AsyncStorage.setItem('user', JSON.stringify(user));
+        const userData = await AsyncStorage.getItem('users');
+        if (userData) {
+            const users = JSON.parse(userData);
+            const updatedUsers = users.map((u) => (u.username === user.username ? user : u));
+
+            await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
             setNote('');
-            alert('Notatka została usunięta pomyślnie');
-        } catch (error) {
-            console.error('Error deleting users note: ', error);
+            alert('Notatka została usunięta');
+        } else {
+            alert('Nie znaleziono takiego użytkownika');
         }
+        } catch (error) {
+        console.error('Error deleting user note:', error);
     }
+  }
 
     return (
         <View>

@@ -8,11 +8,14 @@ const Login = ({ navigation }) => {
 
     const handleLogin = async () => {
       try {
-        const userData = await AsyncStorage.getItem('user');
+        const userData = await AsyncStorage.getItem('users');
         if (userData) {
-          const user = JSON.parse(userData);
-          if (user.username === username && user.password === password) {
+          const users = JSON.parse(userData);
+          const user = users.find((u) => u.username === username && u.password === password);
+          if (user) {
             navigation.navigate({name: 'UserProfile', params: {currentUser: user}});
+            setUsername('');
+            setPassword('');
           } else {
             alert('Wprowadzono złe dane');
           }
