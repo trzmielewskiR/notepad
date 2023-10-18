@@ -1,22 +1,29 @@
 import React, { useState} from "react";
 import { View, Text, TextInput, Button } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        //this is the worst way possible to handle login user
-        const hardcodedUser = {username : 'admin', password: 'admin'};
-
-        const credentials = (username === hardcodedUser.username && password === hardcodedUser.password);
-        if (credentials === true) {
-            //navigate to users profile page
-            navigation.navigate('UserProfile');
+    const handleLogin = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+          const user = JSON.parse(userData);
+          if (user.username === username && user.password === password) {
+            navigation.navigate({name: 'UserProfile', params: {currentUser: user}});
+          } else {
+            alert('Wprowadzono złe dane');
+          }
         } else {
-            alert('Wprowadzono złą nazwę użytkownika lub haslo');
+          alert('Taki użytkownik nie istnieje');
         }
+      } catch (error) {
+        console.error('Error retreving user data:', error);
+      }
     }
+
 
     return (
         <View>

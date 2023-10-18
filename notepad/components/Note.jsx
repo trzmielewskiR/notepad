@@ -1,46 +1,64 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { View, Text, TextInput, Button } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Note = () => {
+const Note = ({user}) => {
     const [note, setNote] = useState('');
-    const [editing, setEditing] = useState(false);
 
-    const handleSaveNote = () => {
-        alert('Notatka została zapisana');
-    };
 
-    
-    const handleEditNote = () => {
-        setEditing(true);
-    };
+    useEffect(() => {
+        const getNote = async () => {
+            try {
+                setNote(user.note);
+            } catch (error) {
+                console.error('Error retrieving user note: ', error);
+            }
+        };
 
-    const handleDeleteNote = () => {
+        getNote();
+    }, [user]);
 
-        alert('Notatka została usunięta');
-        setNote('');
-        setEditing(false);
+
+    const handleSaveNote = async () => {
+        const newNote = note;
+
+        try {
+            user.note = newNote;
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+            alert('Notatka została zapisana');
+        } catch (error) {
+            console.error('Error with saving note: ', error);
+        }
+    }
+
+    const handleDeleteNote = async () => {
+        try {
+            user.note = '';
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+            setNote('');
+            alert('Notatka została usunięta pomyślnie');
+        } catch (error) {
+            console.error('Error deleting users note: ', error);
+        }
     }
 
     return (
         <View>
-            <Text>Notatka:</Text>
-            {editing ? (
-                <TextInput
-                    placeholder="Wprowadź swoją notatkę"
-                    onChangeText={(text) => setNote(text)}
-                    value={note}
-                />
-            ) : (
-                <Text>{note}</Text>
-            )}
+            <Text>Notatka: </Text>
+            <TextInput
+                placeholder="Wprowadź swoją notatkę"
+                onChangeText={(text) => setNote(text)}
+                value={note}
+            />
             <Button
-                title={editing ? 'Zapisz notatkę' : 'Edytuj notatkę'}
-                onPress={editing ? handleSaveNote : handleEditNote}
+                title='Zapisz notatkę' 
+                onPress={handleSaveNote}
             />
             {note && (
                 <Button
-                    title="Usuń notatkę" onPress={handleDeleteNote}
-                />
+                title='Usuń notatkę'
+                onPress={handleDeleteNote}
+            />
             )}
         </View>
     );
