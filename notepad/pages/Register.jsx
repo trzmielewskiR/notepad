@@ -9,7 +9,7 @@ const Register = ({navigation}) => {
 
     const handleRegister = async () => {
         if (password === repeatPassword) {
-            const user = { username, password };
+            const user = { username, password, note: '' };
             try {
                 await AsyncStorage.setItem('user', JSON.stringify(user));
                 alert('Użytkownik został zarejestrowany');

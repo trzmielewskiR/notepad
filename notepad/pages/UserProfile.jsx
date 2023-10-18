@@ -35,7 +35,7 @@ const UserProfile = ({navigation, route}) => {
         {currentUser && (
             <Text>Zalogowano jako: {currentUser.username}</Text>
         )}
-        <Note/>
+        <Note user={currentUser}/>
         <Text>Zmień hasło:</Text>
         <TextInput
         placeholder="Nowe hasło"
