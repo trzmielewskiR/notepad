@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isSafeSQL } from '../utils';
 
 const Register = ({navigation}) => {
     const [username, setUsername] = useState('');
@@ -8,7 +9,26 @@ const Register = ({navigation}) => {
     const [repeatPassword, setRepeatPassword] = useState('');
 
     const handleRegister = async () => {
-        if (password === repeatPassword) {
+        if (!username || !password || !repeatPassword){
+            alert('Nazwa użytkownika oraz hasło nie mogą być puste');
+            return;
+        } else if  (password === repeatPassword) {
+
+            if (username.length <= 6) {
+                alert('Nazwa użytkownika musi być dłuższa niż 6 znaków.');
+                return;
+            }
+
+            if (username.password <= 6 || username.repeatPassword <= 6){
+                alert('Hasło musi być dłuższe niż 6 znaków.');
+                return;
+            }
+
+            if (!(isSafeSQL(username) && isSafeSQL(password) && isSafeSQL(repeatPassword))) {
+                alert('Nazwa użytkownika lub hasło zawierają niedozwolone frazy.');
+                return;
+            }
+
             try {
                 const existingUserData = await AsyncStorage.getItem('users');
                 let users = [];
@@ -19,7 +39,7 @@ const Register = ({navigation}) => {
 
                 const usernameExists = users.some((user) => user.username === username);
                 if (usernameExists){
-                    alert('Nazwa użytkownika jest zajęta, proszę wybrać inną.')
+                    alert('Nazwa użytkownika jest zajęta, proszę wybrać inną.');
                     return;
                 }
 
@@ -31,9 +51,7 @@ const Register = ({navigation}) => {
                     users.push(newUser);
                 }
                 await AsyncStorage.setItem('users', JSON.stringify(users));
-                alert('Użytkownik został zarejestrowany')
-                console.log(newUser);
-                console.log(users);
+                alert('Użytkownik został zarejestrowany');
                 navigation.navigate('Main');
             } catch (error) {
                 console.error('Error storing user data:', error);
@@ -45,7 +63,7 @@ const Register = ({navigation}) => {
 
     return (
         <View>
-            <Text> Zarejestruj użytkownika</Text>
+            <Text>Strona rejestracji</Text>
             <TextInput
                 placeholder='Nazwa użytkownika'
                 onChangeText={(username) => setUsername(username)}

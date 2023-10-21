@@ -1,0 +1,5 @@
+export const isSafeSQL = (input) => {
+    const sqlKeywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'UNION', '1=1', 'OR', 'ALTER'];
+    const inputUppercased = input.toUpperCase();
+    return !sqlKeywords.some((keyword) => inputUppercased.includes(keyword));
+}

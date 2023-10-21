@@ -30,9 +30,9 @@ const Login = ({ navigation }) => {
 
     return (
         <View>
-          <Text>Login</Text>
+          <Text>Strona logowania</Text>
           <TextInput
-            placeholder="Name"
+            placeholder="Nazwa użytkownika"
             onChangeText={(text) => setUsername(text)}
             value={username}
           />

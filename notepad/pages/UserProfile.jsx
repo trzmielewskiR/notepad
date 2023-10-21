@@ -2,17 +2,36 @@ import React, { useState} from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import Note from "../components/Note";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { isSafeSQL } from "../utils";
 
 const UserProfile = ({navigation, route}) => {
     const [newPassword, setNewPassword] = useState('');
     const { currentUser } = route.params;
     
     const handlePasswordChange = async () => {
-        if (newPassword) {
-            currentUser.password = newPassword;
+      if (!newPassword) {
+        alert('Hasło nie może być puste.');
+        return;
+      } else if (newPassword) {
+
+          if (newPassword.length <= 6){
+            alert('Hasło musi być dłuższe niż 6 znaków.');
+            return;
+          }
+
+          if (!(isSafeSQL(newPassword))) {
+            alert('Hasło zawiera niedozwolone frazy.');
+            return;
+          }
+
+          if (newPassword === currentUser.password){
+            alert('Nowe hasło nie może być takie samo jak stare hasło.');
+            return;
+          }
       
             try {
               const userData = await AsyncStorage.getItem('users');
+              currentUser.password = newPassword;
               if (userData) {
                 const users = JSON.parse(userData);
                 const updatedUsers = users.map((u) => (u.username === currentUser.username ? currentUser : u));
