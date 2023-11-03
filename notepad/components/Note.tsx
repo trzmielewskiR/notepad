@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { User } from "../types/User.types";
 
-const Note = ({user}) => {
+const Note:React.FC<User> = (user) => {
     const [note, setNote] = useState('');
 
 
@@ -20,10 +21,11 @@ const Note = ({user}) => {
           const userData = await AsyncStorage.getItem('users');
           if (userData) {
             const users = JSON.parse(userData);
-            const updatedUsers = users.map((u) => (u.username === user.username ? user : u));
+            const updatedUsers = users.map(
+              (u: User) => (u.username === user.username ? user : u));
     
             await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
-            alert('Notatka zostałą zapisana');
+            alert('Notatka została zapisana');
           } else {
             alert('Nie znaleziono takiego użytkownika');
           }
@@ -39,7 +41,8 @@ const Note = ({user}) => {
         const userData = await AsyncStorage.getItem('users');
         if (userData) {
             const users = JSON.parse(userData);
-            const updatedUsers = users.map((u) => (u.username === user.username ? user : u));
+            const updatedUsers = users.map(
+              (u: User) => (u.username === user.username ? user : u));
 
             await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
             setNote('');

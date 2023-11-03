@@ -3,10 +3,12 @@ import { View, Text, TextInput, Button } from "react-native";
 import Note from "../components/Note";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isSafeSQL } from "../utils";
+import { UserProfileProps } from "../types/Navigator.types";
+import { User, Users } from "../types/User.types";
 
-const UserProfile = ({navigation, route}) => {
-    const [newPassword, setNewPassword] = useState('');
-    const { currentUser } = route.params;
+const UserProfile = ({navigation, route}: UserProfileProps ) => {
+    const [newPassword, setNewPassword] = useState<string>('');
+    const { user } = route.params;
     
     const handlePasswordChange = async () => {
       if (!newPassword) {
@@ -24,17 +26,18 @@ const UserProfile = ({navigation, route}) => {
             return;
           }
 
-          if (newPassword === currentUser.password){
+          if (newPassword === user.password){
             alert('Nowe hasło nie może być takie samo jak stare hasło.');
             return;
           }
       
             try {
               const userData = await AsyncStorage.getItem('users');
-              currentUser.password = newPassword;
+              user.password = newPassword;
               if (userData) {
-                const users = JSON.parse(userData);
-                const updatedUsers = users.map((u) => (u.username === currentUser.username ? currentUser : u));
+                const users: Users = JSON.parse(userData);
+                const updatedUsers = users.map(
+                  (u) => (u.username === user.username ? user : u));
       
                 await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
                 alert('Hasło zostało zmienione');
@@ -51,15 +54,16 @@ const UserProfile = ({navigation, route}) => {
         }
 
     const handleLogout = () => {
-        navigation.popToTop('Main');
+        navigation.popToTop();
     }
+
 
     return (
     <View>
-        {currentUser && (
-            <Text>Zalogowano jako: {currentUser.username}</Text>
+        {user && (
+            <Text>Zalogowano jako: {user.username}</Text>
         )}
-        <Note user={currentUser}/>
+        <Note {...user}/>
         <Text>Zmień hasło:</Text>
         <TextInput
         placeholder="Nowe hasło"

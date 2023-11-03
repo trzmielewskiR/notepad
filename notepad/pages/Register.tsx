@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isSafeSQL } from '../utils';
+import { User, Users } from "../types/User.types";
 
-const Register = ({navigation}) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [repeatPassword, setRepeatPassword] = useState('');
+const Register = ({navigation}: any) => {
+    const [username, setUsername] = useState<User['username']>('');
+    const [password, setPassword] = useState<User['password']>('');
+    const [repeatPassword, setRepeatPassword] = useState<string>('');
 
     const handleRegister = async () => {
         if (!username || !password || !repeatPassword){
@@ -19,7 +20,7 @@ const Register = ({navigation}) => {
                 return;
             }
 
-            if (username.password <= 6 || username.repeatPassword <= 6){
+            if (password.length <= 6 || password.length <= 6){
                 alert('Hasło musi być dłuższe niż 6 znaków.');
                 return;
             }
@@ -31,19 +32,19 @@ const Register = ({navigation}) => {
 
             try {
                 const existingUserData = await AsyncStorage.getItem('users');
-                let users = [];
+                let users: Users = [];
 
                 if (existingUserData){
                     users = JSON.parse(existingUserData);
                 }
 
-                const usernameExists = users.some((user) => user.username === username);
+                const usernameExists: boolean = users.some((user: User) => user.username === username);
                 if (usernameExists){
                     alert('Nazwa użytkownika jest zajęta, proszę wybrać inną.');
                     return;
                 }
 
-                const newUser = {username, password, note: ''};
+                const newUser: User = {username, password, note: ''};
 
                 if (users.length === 0){
                     users = [newUser];

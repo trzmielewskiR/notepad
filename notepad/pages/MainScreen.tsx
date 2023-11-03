@@ -1,7 +1,7 @@
 import React from 'react';
 import {View , Text, Button} from 'react-native';
 
-const MainScreen = ({navigation}) => {
+const MainScreen = ({navigation}: any) => {
 
     return (
         <View style={{justifyContent: 'center'}}>
