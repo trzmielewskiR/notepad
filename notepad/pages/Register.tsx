@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { isSafeSQL } from '../utils';
+import { isRegisterSafe } from '../utils';
 import { User, Users } from "../types/User.types";
 
 const Register = ({navigation}: any) => {
@@ -10,44 +10,29 @@ const Register = ({navigation}: any) => {
     const [repeatPassword, setRepeatPassword] = useState<string>('');
 
     const handleRegister = async () => {
-        if (!username || !password || !repeatPassword){
-            alert('Nazwa użytkownika oraz hasło nie mogą być puste');
-            return;
-        } else if  (password === repeatPassword) {
-
-            if (username.length <= 6) {
-                alert('Nazwa użytkownika musi być dłuższa niż 6 znaków.');
-                return;
-            }
-
-            if (password.length <= 6 || password.length <= 6){
-                alert('Hasło musi być dłuższe niż 6 znaków.');
-                return;
-            }
-
-            if (!(isSafeSQL(username) && isSafeSQL(password) && isSafeSQL(repeatPassword))) {
-                alert('Nazwa użytkownika lub hasło zawierają niedozwolone frazy.');
-                return;
-            }
-
+        const isSafe: boolean = isRegisterSafe(
+            [username, password, repeatPassword]);
+        
+        if (isSafe) {
             try {
                 const existingUserData = await AsyncStorage.getItem('users');
                 let users: Users = [];
-
+    
                 if (existingUserData){
                     users = JSON.parse(existingUserData);
                 }
-
-                const usernameExists: boolean = users.some((user: User) => user.username === username);
+    
+                const usernameExists: boolean = users.some(
+                    (user: User) => user.username === username);
                 if (usernameExists){
                     alert('Nazwa użytkownika jest zajęta, proszę wybrać inną.');
                     return;
                 }
-
+    
                 const newUser: User = {username, password, note: ''};
-
+    
                 if (users.length === 0){
-                    users = [newUser];
+                    users = [...users, newUser];
                 } else {
                     users.push(newUser);
                 }
@@ -58,9 +43,11 @@ const Register = ({navigation}: any) => {
                 console.error('Error storing user data:', error);
             }
         } else {
-            alert('Password do not match');
+            alert('Złamano zasady dotyczące tworzenia nazwy użytkownika oraz hasła.');
+            return;
         }
     }
+
 
     return (
         <View>
@@ -86,6 +73,10 @@ const Register = ({navigation}: any) => {
                 title='Stwórz użytkownika'
                 onPress={handleRegister}
             />
+            <Text>Zasady dotyczące tworzenia nazwy użytkownika i hasła:
+                Nazwa użytkownika muszą być dłuższe niż 6 znaków oraz nie
+                mogą zawierać zabronionych fraz oraz słów.
+            </Text>
         </View>
     );
 };

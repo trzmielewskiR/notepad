@@ -2,10 +2,11 @@ import React, {useState, useEffect} from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../types/User.types";
+import { updateNote } from "../utils";
 
 const Note:React.FC<User> = (user) => {
     const [note, setNote] = useState('');
-
+    const emptyNote: string = '';
 
     useEffect(() => {
         if (user && user.note) {
@@ -13,48 +14,26 @@ const Note:React.FC<User> = (user) => {
         }
     }, [user]);
 
-
     const handleSaveNote = async () => {
-        user.note = note;
-
-        try {
-          const userData = await AsyncStorage.getItem('users');
-          if (userData) {
-            const users = JSON.parse(userData);
-            const updatedUsers = users.map(
-              (u: User) => (u.username === user.username ? user : u));
-    
-            await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
-            alert('Notatka została zapisana');
-          } else {
-            alert('Nie znaleziono takiego użytkownika');
-          }
-        } catch (error) {
-          console.error('Error saving user note:', error);
-        }
+      const success = await updateNote(user, note, 'save');
+      if (success) {
+        setNote('');
+        alert('Notatka została zapisana.');
+      } else {
+        alert('Nie znaleziono takiego użytkownika');
       }
+    };
 
     const handleDeleteNote = async () => {
-        user.note = '';
-
-        try {
-        const userData = await AsyncStorage.getItem('users');
-        if (userData) {
-            const users = JSON.parse(userData);
-            const updatedUsers = users.map(
-              (u: User) => (u.username === user.username ? user : u));
-
-            await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
-            setNote('');
-            alert('Notatka została usunięta');
-        } else {
-            alert('Nie znaleziono takiego użytkownika');
-        }
-        } catch (error) {
-        console.error('Error deleting user note:', error);
+      const success = await updateNote(user, emptyNote, 'delete');
+      if (success) {
+        setNote(emptyNote);
+        alert('Notatka została usunięta');
+      } else {
+        alert('Nie znaleziono takiego użytkownika');
+      }
     }
-  }
-
+    
     return (
         <View>
             <Text>Notatka: </Text>
