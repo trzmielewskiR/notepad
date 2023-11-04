@@ -11,11 +11,11 @@ const Register = ({ navigation }: RegisterProps) => {
   const [repeatPassword, setRepeatPassword] = useState<string>("");
 
   const handleRegister = async () => {
-    const isSafe: boolean = isRegisterSafe([
+    const isSafe: boolean = isRegisterSafe(
       username,
       password,
       repeatPassword,
-    ]);
+    );
 
     if (isSafe) {
       try {

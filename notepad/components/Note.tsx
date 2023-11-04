@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../types/User.types";
-import { updateNote, EMPTY_NOTE } from "../utils";
+import { EMPTY_NOTE, saveNote, deleteNote } from "../utils";
 
 const Note: React.FC<User> = (user) => {
   const [note, setNote] = useState("");
@@ -15,7 +15,7 @@ const Note: React.FC<User> = (user) => {
   }, [user]);
 
   const handleSaveNote = async () => {
-    const success = await updateNote(user, note, "save");
+    const success = await saveNote(user, note);
     if (success) {
       setNote(note);
       alert("Notatka została zapisana.");
@@ -25,7 +25,7 @@ const Note: React.FC<User> = (user) => {
   };
 
   const handleDeleteNote = async () => {
-    const success = await updateNote(user, EMPTY_NOTE, "delete");
+    const success = await deleteNote(user, EMPTY_NOTE);
     if (success) {
       setNote(EMPTY_NOTE);
       alert("Notatka została usunięta");
