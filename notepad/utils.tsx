@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User, Users } from "./types/User.types";
 import { UpdateType } from "./types/UpdateNote.types";
 
+export const EMPTY_NOTE = '';
+
 export const updateNote = async (
     user: User, 
     note: string, 
@@ -34,19 +36,19 @@ export const updateNote = async (
 
 
 const validator = (...conditions: any) => (validationTarget: any) => {
-    const validationResults = conditions.map(
+    const validationResults: boolean[] = conditions.map(
         (cond: any) => cond(validationTarget));
-    const failures = validationResults.filter(
-        (res: any) => res.result != true);
+    const failures: boolean[] = validationResults.filter(
+        (res: any) => res.result !== true);
 
     //failures.forEach(console.log)
-    const isSafe: boolean = !failures.some(
+    const isSafe = !failures.some(
         (arg: boolean) => arg === false);
     return isSafe;
 }
 
 
-const isSafeSQL = (input: string[]) => {
+export const isSafeSQL = (input: string[]) => {
     const sqlKeywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 
                          'DROP', 'UNION', '1=1', 'OR', 'ALTER'];
     const inputUppercased = input.map(arg => arg.toUpperCase());
@@ -68,4 +70,13 @@ const isLongEnough = (input: string[]) => {
 };
 
 
-export const isRegisterSafe = validator(isSafeSQL, doesExist, isLongEnough);
+export const isTheSame = (first: string, second: string) => {
+        const result = (first === second);
+        return result;
+}
+
+export const isRegisterSafe = validator(
+    isSafeSQL, doesExist, isLongEnough);
+
+export const isNewPasswordSafe = validator(
+    doesExist, isLongEnough, isSafeSQL);

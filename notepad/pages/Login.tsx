@@ -2,8 +2,9 @@ import React, { useState} from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User, Users } from "../types/User.types";
+import { LoginProps } from "../types/Navigator.types";
 
-const Login = ({ navigation }: any) => {
+const Login = ({ navigation }: LoginProps) => {
     const [username, setUsername] = useState<User['username']>('');
     const [password, setPassword] = useState<User['password']>('');
 

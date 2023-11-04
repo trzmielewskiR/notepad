@@ -9,6 +9,12 @@ export type RootStackParamList = {
     UserProfile: {user: User};
 }
 
+export type MainProps = StackScreenProps<RootStackParamList, 'Main'>;
+
+export type RegisterProps = StackScreenProps<RootStackParamList, 'Register'>;
+
+export type LoginProps = StackScreenProps<RootStackParamList, 'Login'>;
+
 export type UserProfileProps = StackScreenProps<RootStackParamList, 'UserProfile'>;
 
 // export type UserProfileScreenNavigationProp = UserProfileProps['navigation'];
