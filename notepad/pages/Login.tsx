@@ -1,21 +1,28 @@
 import React, { useState} from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { User, Users } from "../types/User.types";
+import { LoginProps } from "../types/Navigator.types";
 
-const Login = ({ navigation }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+const Login = ({ navigation }: LoginProps) => {
+    const [username, setUsername] = useState<User['username']>('');
+    const [password, setPassword] = useState<User['password']>('');
+    const resetUserFields = ()=>{
+      setUsername('');
+      setPassword('');
+    }
 
     const handleLogin = async () => {
       try {
         const userData = await AsyncStorage.getItem('users');
         if (userData) {
-          const users = JSON.parse(userData);
-          const user = users.find((u) => u.username === username && u.password === password);
+          const users: Users = JSON.parse(userData);
+          
+          const user: User | undefined = users.find(
+            (u) => u.username === username && u.password === password);
           if (user) {
-            navigation.navigate({name: 'UserProfile', params: {currentUser: user}});
-            setUsername('');
-            setPassword('');
+            navigation.navigate({name: 'UserProfile', params: {user: user}});
+            resetUserFields();
           } else {
             alert('Wprowadzono złe dane');
           }

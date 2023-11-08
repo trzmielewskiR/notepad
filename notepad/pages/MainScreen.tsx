@@ -1,7 +1,8 @@
 import React from 'react';
 import {View , Text, Button} from 'react-native';
+import { MainProps } from '../types/Navigator.types';
 
-const MainScreen = ({navigation}) => {
+const MainScreen = ({navigation}: MainProps) => {
 
     return (
         <View style={{justifyContent: 'center'}}>
