@@ -35,12 +35,9 @@ const Register = ({ navigation }: RegisterProps) => {
         }
 
         const newUser: User = { username, password, note: "" };
-
-        if (users.length === 0) {
-          users = [...users, newUser];
-        } else {
-          users.push(newUser);
-        }
+        users = [...users,newUser]
+        
+   
         await AsyncStorage.setItem("users", JSON.stringify(users));
         alert("Użytkownik został zarejestrowany");
         navigation.navigate("Main");

@@ -7,18 +7,22 @@ import { LoginProps } from "../types/Navigator.types";
 const Login = ({ navigation }: LoginProps) => {
     const [username, setUsername] = useState<User['username']>('');
     const [password, setPassword] = useState<User['password']>('');
+    const resetUserFields = ()=>{
+      setUsername('');
+      setPassword('');
+    }
 
     const handleLogin = async () => {
       try {
         const userData = await AsyncStorage.getItem('users');
         if (userData) {
           const users: Users = JSON.parse(userData);
+          
           const user: User | undefined = users.find(
             (u) => u.username === username && u.password === password);
           if (user) {
             navigation.navigate({name: 'UserProfile', params: {user: user}});
-            setUsername('');
-            setPassword('');
+            resetUserFields();
           } else {
             alert('Wprowadzono złe dane');
           }

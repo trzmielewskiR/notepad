@@ -4,34 +4,48 @@ import { UpdateType } from "./types/UpdateNote.types";
 
 export const EMPTY_NOTE = "";
 
+export const safeRead =  (key: string) =>async ()=> {
+  try {
+    const data = await AsyncStorage.getItem(key);
+    return data;
+  } catch (error) {
+    console.error('Error retrieving data from storage: ', error);
+    return undefined;
+  }
+};
+
+export const safeReadUsers = safeRead("users")
+
+export const safeWrite = (key: string) => async (value: any) => {
+  try {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error('Error saving data to storage: ', error);
+  }
+};
+
+export const safeWriteUsers = safeWrite("users") as (value:User[]) => Promise<void>;
+
 const updateNote =
   (updateType: UpdateType) =>
   async (user: User, note: string): Promise<boolean> => {
-    try {
-      const userData = await AsyncStorage.getItem("users");
-      if (userData) {
-        const users: Users = JSON.parse(userData);
-        const updatedUsers = users.map((u: User) => {
-          if (u.username == user.username) {
-            if (updateType === "save") {
-              u.note = note;
-            } else if (updateType === "delete") {
-              u.note = "";
-            }
+    const userData = await safeReadUsers();
+    if (userData) {
+      const users: Users = JSON.parse(userData);
+      const updatedUsers = users.map((u: User) => {
+        if (u.username == user.username) {
+          if (updateType === "save") {
+            u.note = note;
+          } else if (updateType === "delete") {
+            u.note = "";
           }
-          return u;
-        });
-        await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
-        return true;
-      } else {
-        throw new Error("User data not found");
-      }
-    } catch (error) {
-      console.error(
-        `Error ${updateType === "save" ? "saving" : "deleting"} user note:`,
-        error
-      );
-      return false;
+        }
+        return u;
+      });
+      safeWriteUsers(updatedUsers);
+      return true;
+    } else {
+      throw new Error("User data not found");
     }
   };
 

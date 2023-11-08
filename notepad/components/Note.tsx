@@ -4,8 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../types/User.types";
 import { EMPTY_NOTE, saveNote, deleteNote } from "../utils";
 
-const Note: React.FC<User> = (user) => {
-  const [note, setNote] = useState("");
+const Note: React.FC<User> = (user: User) => {
+  const [note, setNote] = useState<User['note']>("");
 
   useEffect(() => {
     if (user.note) {
@@ -23,6 +23,7 @@ const Note: React.FC<User> = (user) => {
       alert("Nie znaleziono takiego użytkownika");
     }
   };
+
 
   const handleDeleteNote = async () => {
     const success = await deleteNote(user, EMPTY_NOTE);
