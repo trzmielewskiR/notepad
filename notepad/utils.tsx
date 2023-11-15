@@ -1,12 +1,13 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User, Users } from "./types/User.types";
 import { UpdateType } from "./types/UpdateNote.types";
+import * as SecureStore from "expo-secure-store";
 
 export const EMPTY_NOTE = "";
 
 export const safeRead =  (key: string) =>async ()=> {
   try {
-    const data = await AsyncStorage.getItem(key);
+    const data = await SecureStore.getItemAsync(key, 
+      {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
     return data;
   } catch (error) {
     console.error('Error retrieving data from storage: ', error);
@@ -18,7 +19,9 @@ export const safeReadUsers = safeRead("users")
 
 export const safeWrite = (key: string) => async (value: any) => {
   try {
-    await AsyncStorage.setItem(key, JSON.stringify(value));
+    await SecureStore.setItemAsync(key,
+      JSON.stringify(value), 
+      {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
   } catch (error) {
     console.error('Error saving data to storage: ', error);
   }

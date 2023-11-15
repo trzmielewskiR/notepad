@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../types/User.types";
 import { EMPTY_NOTE, saveNote, deleteNote } from "../utils";
 

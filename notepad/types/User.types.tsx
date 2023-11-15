@@ -1,7 +1,7 @@
 export interface User {
     username: string,
     password: string,
-   readonly  note:  string;
+    note:  string;
 };
 
 export type Users = User[];

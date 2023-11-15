@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isRegisterSafe } from "../utils";
 import { User, Users } from "../types/User.types";
 import { RegisterProps } from "../types/Navigator.types";
+import * as SecureStore from "expo-secure-store";
 
 const Register = ({ navigation }: RegisterProps) => {
   const [username, setUsername] = useState<User["username"]>("");
@@ -19,7 +19,8 @@ const Register = ({ navigation }: RegisterProps) => {
 
     if (isSafe) {
       try {
-        const existingUserData = await AsyncStorage.getItem("users");
+        const existingUserData = await SecureStore.getItemAsync("users", 
+          {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
         let users: Users = [];
 
         if (existingUserData) {
@@ -37,8 +38,9 @@ const Register = ({ navigation }: RegisterProps) => {
         const newUser: User = { username, password, note: "" };
         users = [...users,newUser]
         
-   
-        await AsyncStorage.setItem("users", JSON.stringify(users));
+  
+        await SecureStore.setItemAsync("users", JSON.stringify(users), 
+          {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
         alert("Użytkownik został zarejestrowany");
         navigation.navigate("Main");
       } catch (error) {

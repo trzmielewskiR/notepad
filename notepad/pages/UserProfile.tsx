@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import Note from "../components/Note";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isNewPasswordSafe, isNotTheSame } from "../utils";
 import { UserProfileProps } from "../types/Navigator.types";
 import { User, Users } from "../types/User.types";
+import * as SecureStore from "expo-secure-store";
 
 const UserProfile = ({ navigation, route }: UserProfileProps) => {
   const [newPassword, setNewPassword] = useState<string>("");
@@ -17,7 +17,8 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
 
     if (isSafe) {
       try {
-        const userData = await AsyncStorage.getItem("users");
+        const userData = await SecureStore.getItemAsync("users",
+          {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
         const updatedUser = { ...user, password: newPassword };
         if (userData) {
           const users: Users = JSON.parse(userData);
@@ -25,7 +26,8 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
             currUser.username === updatedUser.username ? currUser : updatedUser
           );
 
-          await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
+          await SecureStore.setItemAsync("users", JSON.stringify(updatedUsers), 
+            {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
           alert("Hasło zostało zmienione");
           setNewPassword("");
         } else {

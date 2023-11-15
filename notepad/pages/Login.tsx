@@ -1,8 +1,8 @@
 import React, { useState} from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User, Users } from "../types/User.types";
 import { LoginProps } from "../types/Navigator.types";
+import * as SecureStore from "expo-secure-store";
 
 const Login = ({ navigation }: LoginProps) => {
     const [username, setUsername] = useState<User['username']>('');
@@ -14,7 +14,8 @@ const Login = ({ navigation }: LoginProps) => {
 
     const handleLogin = async () => {
       try {
-        const userData = await AsyncStorage.getItem('users');
+        const userData = await SecureStore.getItemAsync("users",
+          {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
         if (userData) {
           const users: Users = JSON.parse(userData);
           
