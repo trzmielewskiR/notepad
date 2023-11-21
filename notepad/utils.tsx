@@ -1,6 +1,7 @@
 import { User, Users } from "./types/User.types";
 import { UpdateType } from "./types/UpdateNote.types";
 import * as SecureStore from "expo-secure-store";
+import JailMonkey from 'jail-monkey';
 
 export const EMPTY_NOTE = "";
 
@@ -68,6 +69,19 @@ const validator =
 
     return isSafe;
   };
+
+const validateJailMonkey = (...functions: (() => boolean)[]): boolean => {
+  const results: boolean[] = functions.map(functionCall => functionCall());
+  //device is safe if every function gives false
+  const isSafe = results.every((result) => result === true)
+  return isSafe;
+}
+
+export const isSmartphoneSafe = validateJailMonkey(
+  JailMonkey.canMockLocation,
+  JailMonkey.isJailBroken,
+  JailMonkey.trustFall
+)
 
 const isSafeSQL = (input: string) => {
   const sqlKeywords = [
