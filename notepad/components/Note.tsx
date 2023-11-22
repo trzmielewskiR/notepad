@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import { User } from "../types/User.types";
-import { EMPTY_NOTE, saveNote, deleteNote } from "../utils";
+import { EMPTY_NOTE, saveNote, deleteNote } from "../utils/updateUtils";
 
 const Note: React.FC<User> = (user: User) => {
   const [note, setNote] = useState<User['note']>("");

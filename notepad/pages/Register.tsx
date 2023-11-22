@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { isRegisterSafe } from "../utils";
+import { isRegisterSafe } from "../utils/updateUtils";
 import { User, Users } from "../types/User.types";
 import { RegisterProps } from "../types/Navigator.types";
 import * as SecureStore from "expo-secure-store";

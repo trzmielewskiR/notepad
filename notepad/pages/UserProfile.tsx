@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import Note from "../components/Note";
-import { isNewPasswordSafe, isNotTheSame } from "../utils";
+import { isNewPasswordSafe, isNotTheSame } from "../utils/updateUtils";
 import { UserProfileProps } from "../types/Navigator.types";
 import { User, Users } from "../types/User.types";
 import * as SecureStore from "expo-secure-store";
