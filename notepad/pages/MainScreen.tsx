@@ -1,8 +1,23 @@
-import React from 'react';
-import {View , Text, Button} from 'react-native';
+import React, { useEffect, useCallback } from 'react';
+import {View , Text, Button, BackHandler, Platform} from 'react-native';
 import { MainProps } from '../types/Navigator.types';
+import { isSmartphoneSafe } from '../utils/updateUtils';
 
 const MainScreen = ({navigation}: MainProps) => {
+
+    const isDeviceSafe: boolean = isSmartphoneSafe;
+
+    const handleUnsafeDevice = useCallback(() => {
+        if (Platform.OS === 'android') {
+            BackHandler.exitApp();
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!isDeviceSafe) {
+            handleUnsafeDevice();
+        }
+    }, [isDeviceSafe, handleUnsafeDevice]);
 
     return (
         <View style={{justifyContent: 'center'}}>
@@ -16,6 +31,6 @@ const MainScreen = ({navigation}: MainProps) => {
             onPress={() => navigation.navigate('Login')}/>
         </View>
     );
-}
+};
 
 export default MainScreen;
