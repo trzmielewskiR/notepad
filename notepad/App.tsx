@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,6 +7,14 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import UserProfile from './pages/UserProfile';
 import { RootStackParamList } from './types/Navigator.types';
+import { setRandomFallback } from 'bcryptjs';
+import { getRandomValues } from 'react-native-get-random-values';
+
+setRandomFallback((len) => {
+  const values = new Uint8Array(len);
+  getRandomValues(values);
+  return values;
+})
 
 const Stack = createStackNavigator<RootStackParamList>();
 

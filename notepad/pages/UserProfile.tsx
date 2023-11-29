@@ -5,6 +5,7 @@ import { isNewPasswordSafe, isNotTheSame } from "../utils/updateUtils";
 import { UserProfileProps } from "../types/Navigator.types";
 import { User, Users } from "../types/User.types";
 import * as SecureStore from "expo-secure-store";
+import { generateRandomSalt, saltRounds, hashData } from "../utils/passwordUtils";
 
 const UserProfile = ({ navigation, route }: UserProfileProps) => {
   const [newPassword, setNewPassword] = useState<string>("");
@@ -19,11 +20,15 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
       try {
         const userData = await SecureStore.getItemAsync("users",
           {keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
-        const updatedUser = { ...user, password: newPassword };
+
+        const newSalt = generateRandomSalt(saltRounds);
+        const newPasswordHash = hashData(newPassword, newSalt);
+        const updatedUser = {...user, password: newPasswordHash, salt: newSalt}
+        console.log(updatedUser);
         if (userData) {
           const users: Users = JSON.parse(userData);
           const updatedUsers = users.map((currUser) =>
-            currUser.username === updatedUser.username ? currUser : updatedUser
+            currUser.username === updatedUser.username ? updatedUser : currUser
           );
 
           await SecureStore.setItemAsync("users", JSON.stringify(updatedUsers), 

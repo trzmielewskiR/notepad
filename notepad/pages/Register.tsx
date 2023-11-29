@@ -4,6 +4,7 @@ import { isRegisterSafe } from "../utils/updateUtils";
 import { User, Users } from "../types/User.types";
 import { RegisterProps } from "../types/Navigator.types";
 import * as SecureStore from "expo-secure-store";
+import { generateRandomSalt, hashData, saltRounds } from "../utils/passwordUtils";
 
 const Register = ({ navigation }: RegisterProps) => {
   const [username, setUsername] = useState<User["username"]>("");
@@ -35,7 +36,12 @@ const Register = ({ navigation }: RegisterProps) => {
           return;
         }
 
-        const newUser: User = { username, password, note: "" };
+        const salt = generateRandomSalt(saltRounds);
+        const hashedPassword = hashData(password, salt);
+        console.log(salt, hashedPassword);
+        console.log(password);
+
+        const newUser: User = { username, password: hashedPassword, salt, note: "" };
         users = [...users,newUser]
         
   

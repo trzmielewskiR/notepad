@@ -3,6 +3,8 @@ import { View, Text, TextInput, Button } from "react-native";
 import { User, Users } from "../types/User.types";
 import { LoginProps } from "../types/Navigator.types";
 import * as SecureStore from "expo-secure-store";
+import { compare} from "../utils/passwordUtils";
+import * as bcrypt from "bcryptjs";
 
 const Login = ({ navigation }: LoginProps) => {
     const [username, setUsername] = useState<User['username']>('');
@@ -10,6 +12,17 @@ const Login = ({ navigation }: LoginProps) => {
     const resetUserFields = ()=>{
       setUsername('');
       setPassword('');
+    }
+
+    const checking = () => {
+      const saltRounds = 10;
+      const plainTextPassword = 'password123';
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hashedPassword = bcrypt.hashSync(plainTextPassword, salt);
+      
+      const anotherPlainTextPassowrd = 'password123';
+      const passwordMatch = bcrypt.compareSync(anotherPlainTextPassowrd, hashedPassword);
+      console.log(passwordMatch);
     }
 
     const handleLogin = async () => {
@@ -20,10 +33,18 @@ const Login = ({ navigation }: LoginProps) => {
           const users: Users = JSON.parse(userData);
           
           const user: User | undefined = users.find(
-            (u) => u.username === username && u.password === password);
+            (u) => u.username === username);
           if (user) {
-            navigation.navigate({name: 'UserProfile', params: {user: user}});
+            console.log(user);
+            checking();
+            const passwordMatch = compare(password, user.password);
+
+            if(passwordMatch) {
+              navigation.navigate({name: 'UserProfile', params: {user: user}});
             resetUserFields();
+            } else {
+              alert('Hasła się nie zgadzają') 
+            }
           } else {
             alert('Wprowadzono złe dane');
           }
